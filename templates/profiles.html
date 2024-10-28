@@ -1,0 +1,436 @@
+{% extends "layouts.html" %}
+
+
+{% block title %}
+
+{% endblock %}
+
+{% block main %}
+
+<!-- ENGLISH NAME -->
+<!-- CHINESE NAME -->
+<!-- DISPLAY PHOTO -->
+
+<!-- CONSANGUINITY -->
+    <!-- TREE DIAGRAM -->
+    <!-- TEXT MATRIX -->
+         <!-- PARENTS -->
+         <!-- SIBLINGS -->
+         <!-- PARTNERS -->
+         <!-- CHILDREN -->
+
+<!-- VCARD -->
+<!-- HUMAN READABLE -->
+    <!-- EMAIL -->
+    <!-- MAILING ADDRESS -->
+    <!-- BDAY -->
+    <!-- PHONE -->
+    <!-- EMAIL -->
+    <!-- QR CODE -->
+<!-- MAP -->
+<!-- BIRTHPLACE -->
+<!-- ZODIAC -->
+<!-- STAR SIGN -->
+<!-- INSTAGRAM -->
+<!-- FACEBOOK -->
+
+
+<!--
+<section>
+    <di class="container pv3">
+      <di class="row pt2 pb5">
+        <di class="col-xs-12 col-sm-7 col-sm-push-4 mb3">
+          <h2>Virginia Thieu</h2>
+          <di class="flex flex-row justify-between items-center w-100 mt2">
+
+            <di class="flex flex-column">
+                <h3>Pharmacy</h3>
+              <h3 class="mt1">Born in 1986</h3>
+            </di>
+
+            <di class="flex flex-row">
+            </di>
+          </di>
+            <h3 class="mb1 mt4">Biography</h3>
+            <p class="mt3">mother of Hawa and Andon</p>
+        </di>
+
+
+
+        <di class="col-xs-12 col-sm-3 col-sm-pull-6">
+          <img alt="Virginia" class="gravatar img-user mb3" id="virginia_thieu" src="https://gravatar.com/avatar/a8a9c3a31267fc7b7ae8d7aa7e89681d.png?d=mm&amp;s=300" />
+
+SCRIPT
+<script>
+  //<![CDATA[
+  function editImageTag(checkurl, size, gravatar_id, gravatar_hover_id, id) {
+          var xmlhttp = new XMLHttpRequest(), method = 'GET';
+          xmlhttp.open(method,checkurl, true);
+          xmlhttp.onload = function() {
+                  if (xmlhttp.status != 404) {
+                          const elem = document.getElementById(id)
+                          elem.setAttribute("onmouseover","$(this).attr('src','https://gravatar.com/avatar/"+ gravatar_hover_id + '.png?s=' + size+"')")
+                          elem.setAttribute("onmouseout","$(this).attr('src','https://gravatar.com/avatar/"+ gravatar_id + '.png?s=' + size+"')")
+                  }
+          };
+      xmlhttp.send();
+  } editImageTag('https://gravatar.com/avatar/96892b8d45a60b03439457ba6e1d34b5.png?d=404&s=300', 300,'a8a9c3a31267fc7b7ae8d7aa7e89681d','96892b8d45a60b03439457ba6e1d34b5','437')
+  //]]>
+</script>
+-->
+    <div class="container">
+        <div class="w3-container py-5 text-center">
+            <div class="w3-card-4 center" style="width: 100%; min-width: 350px; max-width: 500px;">
+                <!-- ENGLISH NAME -->
+                <img src ="{{dp_img_.image}}" alt="display_pic" style="width: 100%; max-width: 500px;">
+                <br><br><br>
+                <h1 class="mb1">{{fullName_.first_EN}} {{fullName_.middle_EN}} {{fullName_.last_EN}}</h1>
+
+                <!-- CHINESE NAME -->
+
+                <div class="CN">
+                <p>
+                    {{CN_Name_.last_CN}}{{CN_Name_.middle_CN}}{{CN_Name_.first_CN}}
+                </p>
+                </div>
+                <p>
+                    <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                        <a href="https://translate.google.com/?sl=yue&tl=zh-TW&text={{CN_Name_.last_CN}}{{CN_Name_.middle_CN}}{{CN_Name_.first_CN}}&op=translate" target="_blank">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20%" height="auto" fill="currentColor" class="bi bi-translate" viewBox="0 0 16 16">
+                                    <path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022z"/>
+                                    <path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995q.289.451.63.846c-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6 6 0 0 1-.415-.492 2 2 0 0 1-.94.31"/>
+                                </svg>
+                            </span>
+                        </a>
+                    </button>
+                </p>
+                <br>
+            </div>
+            <hr>
+            <!-- VCARD -->
+            <div class="w3-container center">
+                <h3>Contact Card</h3>
+                <table class="w3-table-all w3-card-4 center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                Address
+                            </th>
+                            <td class="text-center align-text-top" style="width:60%">
+                                {% if address_ != "unfound" %}
+                                {{address_.street1}}<br>
+                                {% if address_.street2 != "" %}
+                                    {{address_.street2}}<br>
+                                {% endif %}
+                                {{address_.city}}, {{address_.state}} {{address_.postal}}<br>
+                                {{address_.country}}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                E-Mail
+                            </th>
+                            <td class="text-center align-text-top">
+                                {{email_.email}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                Phone No.
+                            </th>
+                            <td class="text-center align-text-top">
+                                {{phone_}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                Birth Date
+                            </th>
+                            <td class="text-center align-text-top">
+                                {{DOB_}}
+                            </td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <br><br>
+            <img style="width: 70%; max-width: 500px" class="center" alt="QR_Code" src = {{QR_URL_}})>
+
+        </div>
+        <p></p>
+
+        <div class="w3-container">
+            <div class="w3-container">
+                <h3>Birth Information</h3>
+                <table class="w3-table-all w3-card-4 center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                Age
+                            </th>
+                            <td class="text-center align-text-top" style="width:60%">
+                                {{age_}}
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                Generation
+                            </th>
+                            <td class="text-center align-text-top">
+                                {{generation_}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                Zodiac
+                            </th>
+                            <td class="text-center align-text-top">
+                                {{animal_}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                Star Sign
+                            </th>
+                            <td class="text-center align-text-top">
+                                {{starSign_}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">
+                                Birthplace
+                            </th>
+                            <td class="text-center align-text-top">
+                                {{birthplace_}}
+                            </td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+
+            <hr>
+            <h3>Bloodline Tracing, Ancestral Pedigree</h3>
+            <div>to Ancestor Thanh Thieu</div>
+            <p></p>
+
+            <table class="w3-table-all w3-card-4 center" style="width:auto">
+                <thead>
+                    <th style="width:50%">Person</th>
+                    <th class="text-center">Order</th>
+                    <th class="text-center">Gen</th>
+                </thead>
+
+            {% for output_ in outputs_ %}
+                    <tr>
+                        <td>
+                            <form action="/profiles" method="post" class="inline">
+                                <input type="hidden" name="firstName" value={{output_.first_EN}}>
+                                <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                        </svg>
+                                    </span>
+                                    {{output_.first_EN}}
+                                </button>
+                            </form>
+                        </td>
+                        <td class="text-center">{{output_.order}}</td>
+                        <td class="text-center">{{output_.gens}}</td>
+                    </tr>
+            {% endfor %}
+            </table>
+            <hr>
+            <div class="w3-container">
+                <h3 class="mb1">Parents & Immediate Kinfolk</h3>
+                <table class="w3-table-all w3-card-4 center" style="width:auto">
+                    <thead>
+                        <tr>
+                            <td class="text-center">
+                                <!-- FATHER -->
+                                <h3 class="mb1">Father</h3>
+                            </td>
+                            <td class="text-center">
+                                <!--BLANK-->
+                            </td>
+                            <td class="text-center">
+                                <!-- MOTHER -->
+                                <h3 class="mb1 mt3">Mother</h3>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center align-text-top">
+                                {% if Father_ != "unfound" %}
+                                <form action="/profiles" method="post" class="inline">
+                                    <input type="hidden" name="firstName" value={{Father_}}>
+                                    <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                            </svg>
+                                        </span>
+                                        {{Father_}}
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center align-text-top">
+                                <!--BLANK-->
+                            </td>
+
+                            <td class="text-center align-text-top">
+                                {% if Mother_ != "unfound" %}
+                                <form action="/profiles" method="post" class="inline">
+                                    <input type="hidden" name="firstName" value={{Mother_}}>
+                                    <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                          </svg>
+                                        </span>
+                                        {{Mother_}}
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td class="text-center align-text-top" colspan="3">
+                                <h5 class="mb1">Siblings</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center align-text-top">
+                                <!-- SIBLINGS (SAME FATHER ONLY)-->
+                                <h5 class="mb1"><u>Half</u></h5>
+                                {% for ofDadHalfSibling_ in ofDadHalfSiblings_ %}
+                                <p>{{ofDadHalfSibling_.Child}}</p>
+                                {% endfor %}
+                            </td>
+                            <td class="text-center align-text-top">
+                                <!-- SIBLINGS (FULL) -->
+                                <h5 class="mb1"><u>Full</u></h5>
+                                {% for fullSibling_ in fullSiblings_ %}
+                                    <p>
+                                        {% if personName_ == fullSibling_.Child %}
+                                            Self: {{fullSibling_.Child}}
+                                        {% else %}
+                                        <form action="/profiles" method="post" class="inline">
+                                            <input type="hidden" name="firstName" value={{fullSibling_.Child}}>
+                                            <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                                                <span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                                    </svg>
+                                                </span>
+                                                {{fullSibling_.Child}}
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </p>
+                                {% endfor %}
+                            </td>
+                            <td class="text-center align-text-top">
+                                <!-- SIBLINGS (SAME MOTHER ONLY)-->
+                                <h5 class="mb1"><u>Half</u></h5>
+                                {% for ofMomHalfSibling_ in ofMomHalfSiblings_ %}
+                                <p>
+                                    <form action="/profiles" method="post" class="inline">
+                                        <input type="hidden" name="firstName" value={{ofMomHalfSibling_.Child}}>
+                                        <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                                </svg>
+                                            </span>
+                                            {{ofMomHalfSibling_.Child}}
+                                        </button>
+                                    </form>
+                                </p>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr>
+
+            <div class="w3-container">
+                <!-- PARTNERS & THEIR CHILDREN -->
+                <h3 class="mb1">Lineage, Legacy</h3>
+                <h4 class="mb1">Partner History & Children</h4>
+
+                <table class="w3-table-all w3-card-4 center" style="width:auto">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        {% for partner_ in partners_ %}
+                        <tr>
+                            <th class="text-center">
+                                <form action="/profiles" method="post" class="inline">
+                                    <input type="hidden" name="firstName" value={{partner_.Partner2}}>
+                                    ——————
+                                    <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                          </svg>
+                                        </span>
+                                        {{partner_.Partner2}}
+                                    </button>
+                                    ——————
+                                </form>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                {% for chitlin_ in chitlins_ %}
+                                    {% if partner_.Partner2 == chitlin_.Parent %}
+                                            <form action="/profiles" method="post" class="inline">
+                                                <input type="hidden" name="firstName" value={{chitlin_.Child}}>
+                                                <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                                                    <span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                                      </svg>
+                                                    </span>
+                                                    {{chitlin_.Child}}
+                                                </button>
+                                            </form>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+        {% if address_str_ != "unfound" %}
+    <div>
+        <hr>
+        <h3>Map of Primary Residence</h3>
+        <div class="w3-container center" style="width: 70%">
+            <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q={{address_str_}}+()&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed+()&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
+            </iframe>
+        </div>
+        {% endif %}
+        <!--
+        https://www.maps.ie/create-google-map/
+        -->
+    </div>
+
+{% endblock %}

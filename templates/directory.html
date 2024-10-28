@@ -1,0 +1,271 @@
+{% extends "layouts.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block main %}
+
+
+
+
+    <div id="checkbox_div">
+        <!--
+        4 things must be done to have a column hidden by default.
+        1) change value from "hide" to "show" from checkbox.
+        2) remove 'checked="true"' from checkbox.
+        3) style="display:none;" to the th header.
+        4) style="display:none;" to the td cell(s).
+        -->
+        <input type="checkbox" value="hide" id="id_col" onchange="hide_show_table(this.id);" checked="true"> ID&ensp;
+        <input type="checkbox" value="hide" id="lastName_col" onchange="hide_show_table(this.id);" checked="true"> Last Name&ensp;
+        <input type="checkbox" value="show" id="middleName_col" onchange="hide_show_table(this.id);"> Middle Name&ensp;
+        <input type="checkbox" value="hide" id="firstName_col" onchange="hide_show_table(this.id);" checked="true"> First Name&ensp;
+        <input type="checkbox" value="hide" id="sex_col" onchange="hide_show_table(this.id);" checked="true"> Sex&ensp;
+        <input type="checkbox" value="hide" id="CN_col" onchange="hide_show_table(this.id);" checked="true"> Chinese Name&ensp;
+        <input type="checkbox" value="hide" id="age_col" onchange="hide_show_table(this.id);" checked="true"> Age&ensp;
+        <input type="checkbox" value="hide" id="DOB_col" onchange="hide_show_table(this.id);" checked="true"> DOB&ensp;
+        <input type="checkbox" value="show" id="DOD_col" onchange="hide_show_table(this.id);"> DOD&ensp;
+        <input type="checkbox" value="hide" id="zodiac_col" onchange="hide_show_table(this.id);" checked="true"> Zodiac&ensp;
+        <input type="checkbox" value="hide" id="gen_col" onchange="hide_show_table(this.id);" checked="true"> Gen&ensp;
+        <input type="checkbox" value="hide" id="birthday_col" onchange="hide_show_table(this.id);" checked="true"> Birthday&ensp;
+        <input type="checkbox" value="hide" id="starSign_col" onchange="hide_show_table(this.id);" checked="true"> Star Sign&ensp;
+        <input type="checkbox" value="hide" id="socials_col" onchange="hide_show_table(this.id);" checked="true"> Socials&ensp;
+        <p></p>
+    </div>
+
+    <input type="text" id="searchInput" onkeyup="searchFunc()" placeholder="Search for first names">
+
+    <div class="lock-header">
+    <table id="dirTable" class="table table-hover w3-table-all w3-hoverable center" style="width: 100%;">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)" class="th-dir text-start" id="id_col_head">ID</th>
+                <th onclick="sortTable(1)" class="th-dir text-start" id="lastName_col_head">Last Name</th>
+                <th onclick="sortTable(2)" class="th-dir text-start" id="middleName_col_head" style="display:none;">Middle Name</th>
+                <th onclick="sortTable(3)" class="th-dir text-start" id="firstName_col_head">First Name</th>
+                <th onclick="sortTable(4)" class="th-dir text-start" id="sex_col_head">Sex</th>
+                <th onclick="sortTable(5)" class="th-dir text-start" id="CN_col_head">🀄️</th>
+                <th onclick="sortTable(6)" class="th-dir text-start" id="age_col_head">Age</th>
+                <th onclick="sortTable(7)" class="th-dir text-start" id="DOB_col_head">DOB</th>
+                <th onclick="sortTable(8)" class="th-dir text-start" id="DOD_col_head" style="display:none;">DOD</th>
+                <th onclick="sortTable(9)" class="th-dir text-start" id="zodiac_col_head">Zodiac</th>
+                <th onclick="sortTable(10)" class="th-dir text-start" id="gen_col_head">Gen</th>
+                <th onclick="sortTable(11)" class="th-dir text-start" id="birthday_col_head">Birthday</th>
+                <th onclick="sortTable(12)" class="th-dir text-start" id="starSign_col_head">Star sign</th>
+                <th onclick="sortTable(13)" class="th-dir text-start" id="socials_col_head">Socials</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for person_ in persons_ %}
+                <td class="text-start id_col">{{person_.id}}</td>
+                <td class="text-start lastName_col">{{person_.last_EN}}</td>
+                <td class="text-start middleName_col" style="display:none;">{{person_.middle_EN}}</td>
+                <td class="text-start firstName_col">
+                    <form action="/profiles" method="post" class="inline">
+                        <input type="hidden" name="firstName" value={{person_.first_EN}}>
+                        <button type="submit" name="submit_param" value="submit_value" class="w3-button w3-round-large">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                              </svg>
+                            </span>
+                            {{person_.first_EN}}
+                        </button>
+                    </form>
+                </td>
+                <td class="text-start sex_col">{{person_.sex}}</td>
+                <td class="text-start CN_col">{{person_.CN_Name}}</td>
+                <td class="text-start age_col">{{person_.Age}}</td>
+                <td class="text-start DOB_col">{{person_.DOB}}</td>
+                <td class="text-start DOD_col" style="display:none;">{{person_.DOD}}</td>
+                <td class="text-start zodiac_col">{{person_.Zodiac}}</td>
+                <td class="text-start gen_col">{{person_.Gen}}</td>
+                <td class="text-start birthday_col">{{person_.bday}}</td>
+                <td class="text-start starSign_col">{{person_.starSign}}</td>
+                <td class="text-start socials_col">
+                    {% if person_.FB %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+                        <a xlink:href="{{person_.FB}}" target="_blank">
+                        <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>
+                        </a>
+                    </svg>
+                    {% endif %}
+                    {% if person_.IG %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
+                        <a xlink:href="{{person_.IG}}" target="_blank">
+                        <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
+                        </a>
+                    </svg>
+                    {% endif %}
+                </td>
+            </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+<script>
+// don't forget semicolons.
+// methods, properties, etc. are case-sensitive.
+
+function searchFunc() {
+// Declare variables
+    var input, filter, table, tr;
+
+    input = document.getElementById("searchInput"); // write the search input into a variable.
+    filter = input.value.toUpperCase(); // convert input to uppercase.
+
+    table = document.getElementById("dirTable"); // write the table into a variable.
+    tr = document.getElementsByTagName("tr"); // write the rows into a variable.
+
+    // Loop through each row of the table, hiding those that don't match the query.
+    var td, i, txtValue;
+    for (i = 0; i < tr.length; i++){
+        td = tr[i].getElementsByTagName("td")[3]; // extract the data from the row. index [3] is 4rd column number.
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+
+/*
+// Function for hide/show columns (Method #1: check boxes)
+function showHideCol(colIndex) {
+    const table = document.querySelector('table');
+    const rows = table.querySelectorAll('tr');
+
+    for (let row of rows) {
+        const cells = row.querySelectorAll('th, td');
+        const cell = cells[colIndex];
+        cell.style.display = cell.style.display == 'none' ? '': 'none';
+    }
+}
+*/
+
+// Function for hide/show columns (Method #2: clicking headers)
+// (https://talkerscode.com/webtricks/show-hide-table-column-using-javascript.php)
+
+function hide_show_table(col_name)
+// col_name is the input.
+// this.id will be assigned to col_name.
+// this.id will pull the id (e.g. name_col, age_col, city_col) from the list item chosen.
+{
+  // look for the CHECKBOX ID of the col_num, assign it to variable checkbox_val.
+  checkbox_val = document.getElementById(col_name).value;
+
+  // write an if statement saying what should happen when the checkbox value is "hide" vs anything else.
+  if (checkbox_val == "hide")
+  {
+    // declare all_col variable. grab the every element in the col that has been labeled with col_name.
+    var all_col = document.getElementsByClassName(col_name);
+
+    // write a for loop to loop through each of the cells in the selected column.
+    for (var i=0; i < all_col.length; i++)
+    {
+      // hide the cell for that particular row index
+      all_col[i].style.display = "none";
+    }
+    // hide the column HEADER
+    document.getElementById(col_name+"_head").style.display = "none";
+
+    // overwrite the value of the CHECKBOX from "hide" to "show"
+    document.getElementById(col_name).value = "show";
+  }
+  else // if (checkbox_value == "show")
+  {
+  	var all_col = document.getElementsByClassName(col_name);
+
+    for (var i=0; i < all_col.length; i++)
+    {
+      all_col[i].style.display = "table-cell";
+    }
+    document.getElementById(col_name+"_head").style.display = "table-cell";
+    document.getElementById(col_name).value = "hide";
+  }
+}
+
+
+
+
+function sortTable(n){
+
+	var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount;
+    switchcount = 0; // zero out the switch counter.
+	table = document.getElementById("dirTable");
+	dir = "asc"; // set the sorting direction to ascending to be the arbitrary default.
+    switching = true; // start with switching mode activated.
+
+
+	// this while loop is design to run until the entire table is confirmed to be sorted.
+    while(switching) {
+    	switching = false; // change value to say no switching is done.
+        rows = table.rows; // then assign rows of table into variable.
+
+        for (i=1; i < (rows.length-1); i++) { // loop through ROWS except headers; start on i=1, not i=0; continue until the lenght of rows minus 1.
+        	shouldSwitch = false; // start by assuming that the row pairs are in the correct order.
+
+          // this loop will cyclically evaluate pairs of rows until it detects a pair that is not in the right order. at that point it will stop. it will restart again when switching is toggled back to true.
+            // grab values fro the ith row in the nth column; x is current row, y is subsequent row
+            x = rows[i].getElementsByTagName("td")[n];
+            y = rows[i+1].getElementsByTagName("td")[n];
+
+            // check whether x & y should switch places.
+            // check which value is greater. check if we want asc or desc. compare the two.
+
+
+            // this if statement runs if the value is text
+            if (isNaN(Number(x.innerHTML))) {
+                if (dir == "asc" && x.innerHTML.toUpperCase() > y.innerHTML.toUpperCase()) {
+                    // if so, toggle the shouldSwitch to indicate it and break the while loop.
+                    shouldSwitch = true;
+                    break;
+                }
+                else if (dir == "desc" && x.innerHTML.toUpperCase() < y.innerHTML.toUpperCase()) {
+                    // if so, toggle the shouldSwitch to indicate it and break the while loop.
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+
+            // this if statement runs if the value is not text (i.e. numeric)
+            else {
+                if (dir == "asc" && Number(x.innerHTML) > Number(y.innerHTML)) {
+                    shouldSwitch = true;
+                    break;
+                }
+                else if (dir == "desc" && Number(x.innerHTML) < Number(y.innerHTML)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+
+            // if none of the above if statements is triggered, then the loop continues because it is assumed that the two elements are already in the correct order and we should continue evaluating the next pair.
+        }
+        if (shouldSwitch) {
+          // if shouldSwitch has been toggled to true, then swap the rows.
+          rows[i].parentNode.insertBefore(rows[i+1], rows[i]);
+	      // toggle the switching to be true so that we can stay in the while loop again and iterate again.
+          switching = true;
+
+          switchcount ++;
+		}
+        else {
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+           }
+        }
+    }
+}
+
+</script>
+
+{% endblock %}

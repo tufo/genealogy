@@ -1,0 +1,98 @@
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: x-large;
+}
+
+/* Colors for brand */
+nav .navbar-brand .blue
+{
+    color: #537fbe;
+}
+nav .navbar-brand .red
+{
+    color: #ea433b;
+}
+nav .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+nav .navbar-brand .green
+{
+    color: #2e944b;
+}
+
+
+.CN {
+    color: black;
+    font-size: min(8vw, 96px);
+    padding: 5px;
+    text-align: center;
+}
+
+iframe {
+    width: 100%;
+    /* height: 60vmax; */
+    height: 70vh;
+}
+
+#searchInput {
+    background-image: url('http://w3schools.com/css/searchicon.png');
+    background-position: 10px 12px;
+    background-repeat: no-repeat;
+    width: 100%;
+    font-size: 16px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+}
+
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right:auto;
+    width: auto;
+}
+
+
+/* Table Overflow
+(https://stackoverflow.com/questions/74050204/how-to-make-a-table-head-sticky-but-with-overflow) */
+.lock-header {
+    overflow-y: auto;
+    max-height: 75vh;
+}
+/* Lock first row */
+.lock-header thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;         /* Ensure it stays on top of other player divs */
+}
+
+/*
+# Lock first column
+(https://stackoverflow.com/questions/1312236/how-do-i-create-an-html-table-with-a-fixed-frozen-left-column-and-a-scrollable-b)
+Swastik Mishra
+*/
+
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.container2 {
+    display: flex;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#dirTable tr:hover {
+    background-color: #f1f1f1;
+}
+
+th {
+    cursor: pointer;
+}
