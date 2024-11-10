@@ -730,7 +730,7 @@ import io
 """
 
 @app.route("/")
-@login_required
+#@login_required
 def index():
 
     '''
@@ -766,7 +766,7 @@ def index():
 
 # DIRECTORY
 @app.route("/directory", methods=["GET", "POST"])
-@login_required
+#@login_required
 def directory():
 
     from datetime import datetime
