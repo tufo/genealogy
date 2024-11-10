@@ -10,6 +10,8 @@
         "src": "/(.*)", 
         "dest": "app.py"
         }
-    ]
-
+    ],
+    "redirects": [
+        { "source": "/", "destination": "/directory", "permanent": true }
+      ]
 }
