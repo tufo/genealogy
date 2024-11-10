@@ -1024,7 +1024,7 @@ def login():
 
         # Ensure username was submitted.
         if not request.form.get("username"):
-            return apology("must profile username", 403)
+            return apology("must provide username", 403)
 
         # Ensure password was submited.
         if not request.form.get("password"):
