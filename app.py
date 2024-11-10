@@ -729,7 +729,7 @@ import base64
 import io
 """
 
-@app.route("/")
+@app.route("/index")
 @login_required
 def index():
 
@@ -765,8 +765,8 @@ def index():
     return render_template("index.html", username_ = username)
 
 # DIRECTORY
-@app.route("/directory", methods=["GET", "POST"])
-@login_required
+@app.route("/", methods=["GET", "POST"])
+#@login_required
 def directory():
 
     from datetime import datetime
