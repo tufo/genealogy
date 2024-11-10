@@ -11,6 +11,6 @@
         "dest": "app.py"
         }
     ],
-    "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+    "rewrites": [{ "src": "/(.*)", "dest": "/" }]
 
 }
