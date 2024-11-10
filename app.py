@@ -729,8 +729,8 @@ import base64
 import io
 """
 
-@app.route("/index")
-@login_required
+@app.route("/")
+
 def index():
 
     '''
@@ -750,23 +750,13 @@ def index():
     #return render_template("index.html", img_data=encoded_img_data.decode('utf-8'))
     """
 
-    id = session["user_id"]
-    query = """
-        SELECT
-            username
-        FROM users
-        WHERE id is ?
-    """
-    array=[]
-    for row in con.execute(query, (id, )):
-        array.append(row)
-    username = array[0]['username']
 
-    return render_template("index.html", username_ = username)
+
+    return render_template("index.html")
 
 # DIRECTORY
-@app.route("/")
-#@login_required
+@app.route("/directory", methods=["GET", "POST"])
+@login_required
 def directory():
 
     from datetime import datetime
