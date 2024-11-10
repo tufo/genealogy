@@ -698,6 +698,9 @@ def spaces(url):
 # Configure application
 app = Flask(__name__)
 
+if __name__ == "__main__":
+    app.run(debug=True)
+
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
