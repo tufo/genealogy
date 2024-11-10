@@ -765,7 +765,7 @@ def index():
     return render_template("index.html", username_ = username)
 
 # DIRECTORY
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 #@login_required
 def directory():
 
