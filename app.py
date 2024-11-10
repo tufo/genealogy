@@ -2,31 +2,46 @@
 
 import os
 
-# from cs50 import SQL
+#from cs50 import SQL #cs50 SQL
+#from cs50_SQL import SQL #cs50 SQL
 import sqlite3
+
+
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helper import apology, login_required, gen_lookup, star_lookup, zodiac, zodiac_lookup, qr_gen
+from helper import apology, login_required, gen_lookup, star_lookup, zodiac, qr_gen
 
 ################################################
 
+# FUNCTION: SQL function
+def dict_factory(cursor, row):
+    fields = [column[0] for column in cursor.description]
+    return {key: value for key, value in zip(fields, row)}
+
 # FUNCTION: Chinese Name
 def CN_lookup(personName):
-    CN_Name = db.execute("""
-        SELECT
-            first_EN
-            , last_EN
-            , last_CN
-            , middle_CN
-            , first_CN
-        FROM CN_Names
-        JOIN persons
-        ON personID = persons.id
-        WHERE First_EN IS ?
-    """,
-    personName)
+    query = """
+    SELECT
+        first_EN
+        , last_EN
+        , last_CN
+        , middle_CN
+        , first_CN
+    FROM CN_Names
+    JOIN persons
+    ON personID = persons.id
+    WHERE First_EN IS ?
+    """
+
+    #CN_Name = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    CN_Name = array
+    #con.close()
 
     if not CN_Name:
         CN_Name = "unfound"
@@ -36,29 +51,46 @@ def CN_lookup(personName):
 
 # FUNCTION: Full name
 def full_name(personName):
-    fullName = db.execute("""
-        SELECT
-            first_EN
-            , middle_EN
-            , last_EN
-        FROM
-            persons
-        WHERE
-            first_EN IS ?
-        """,
-        personName)
+
+    query = """
+    SELECT
+        first_EN
+        , middle_EN
+        , last_EN
+    FROM
+        persons
+    WHERE
+        first_EN IS ?
+    """
+
+    #fullName = db.execute(query, personName) #cs50 SQL
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    fullName = array
+    #con.close()
+
     return fullName
 
 # FUNCTION: display photo
 def display_photo(personName):
-    dp_img = db.execute("""
+
+    query = """
     SELECT image
     FROM DPs
     JOIN persons
     ON DPs.personID = persons.id
     WHERE first_EN = ?
-    """,
-    personName)
+    """
+
+    #dp_img = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    dp_img = array
+    #con.close()
+
     if dp_img:
         dp_img = dp_img[0]
     else:
@@ -79,7 +111,7 @@ def sib_lookup(personName, type):
         keyword1="NOT IN"
         keyword2="IN"
 
-    siblings = db.execute(f"""
+    query = f"""
         SELECT
             child.First_EN AS Child
             , father.first_EN AS Father
@@ -131,46 +163,62 @@ def sib_lookup(personName, type):
             WHERE Child.First_EN = ?
             )
         ORDER BY Age DESC
-        """,
-        personName, personName)
+    """
+
+    # siblings = db.execute(query, personName, personName) #cs50 SQL
+    array=[]
+    for row in con.execute(query, (personName, personName, )):
+        array.append(row)
+    siblings = array
+    #con.close()
+
     return siblings
 
 # FUNCTION: Age Order
 def age_order(personName):
-    order = db.execute("""
+
+    query = """
+        SELECT
+            _Order_
+            , first_EN
+        FROM(
             SELECT
-                _Order_
-                , first_EN
-            FROM(
-                SELECT
-                    ROW_NUMBER() OVER(ORDER BY persons.DOB_Year ASC) _Order_
-                    ,lineage.childID
-                    , persons.first_EN
-                    , persons.DOB_Year
-                FROM lineage
-                JOIN persons
-                ON lineage.childID = persons.id
-                WHERE lineage.parentID
+                ROW_NUMBER() OVER(ORDER BY persons.DOB_Year ASC) _Order_
+                ,lineage.childID
+                , persons.first_EN
+                , persons.DOB_Year
+            FROM lineage
+            JOIN persons
+            ON lineage.childID = persons.id
+            WHERE lineage.parentID
+                IN(
+                    SELECT
+                    partner1_id
+                    FROM partners
+                    WHERE partner1_id
                     IN(
                         SELECT
-                        partner1_id
-                        FROM partners
-                        WHERE partner1_id
-                        IN(
-                            SELECT
-                                Parent.id
-                            FROM lineage
-                            JOIN persons AS Child
-                            ON lineage.childID = Child.id
-                            JOIN persons AS Parent
-                            ON lineage.parentID = Parent.id
-                            WHERE Child.first_EN = ?
-                            )
+                            Parent.id
+                        FROM lineage
+                        JOIN persons AS Child
+                        ON lineage.childID = Child.id
+                        JOIN persons AS Parent
+                        ON lineage.parentID = Parent.id
+                        WHERE Child.first_EN = ?
                         )
-                )
-            WHERE first_EN IS ?
-            """,
-            personName, personName)
+                    )
+            )
+        WHERE first_EN IS ?
+    """
+
+    #order = db.execute(query, personName, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, personName,)):
+        array.append(row)
+    order = array
+    #con.close()
+
 
     if not order:
         order = 0
@@ -181,40 +229,57 @@ def age_order(personName):
 
 # FUNCTION: parent lookup along the bloodline.
 def parent_lookup(personName):
-    bloodline_parent = db.execute("""
-    SELECT
-        parent.first_EN
-        --, child.first_EN
-    FROM lineage
-    JOIN persons as child
-    ON lineage.childID = child.id
-    JOIN persons as parent
-    ON lineage.parentID = parent.id
-    WHERE child.first_EN = ?
-    AND lineage.parentID
-        IN (SELECT
-        partner1_id
-        FROM partners
-        )
-    """,
-    personName)
+
+    query = """
+        SELECT
+            parent.first_EN
+            --, child.first_EN
+        FROM lineage
+        JOIN persons as child
+        ON lineage.childID = child.id
+        JOIN persons as parent
+        ON lineage.parentID = parent.id
+        WHERE child.first_EN = ?
+        AND lineage.parentID
+            IN (SELECT
+            partner1_id
+            FROM partners
+            )
+    """
+
+    #bloodline_parent = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    bloodline_parent = array
+    #con.close()
+
     return bloodline_parent
 
 # FUNCTION: look up both parents
 def parents_lookup(personName):
-    Parents = db.execute("""
-    SELECT
-        Child.First_EN AS Child
-        , Parent.First_EN AS Parent_First_EN
-        , Parent.sex AS Parent_sex
-    FROM lineage
-    JOIN persons AS Child
-    ON lineage.childID = Child.id
-    JOIN persons AS Parent
-    ON lineage.parentID = Parent.id
-    WHERE Child IS ?
-    """,
-    personName)
+
+    query = """
+        SELECT
+            Child.First_EN AS Child
+            , Parent.First_EN AS Parent_First_EN
+            , Parent.sex AS Parent_sex
+        FROM lineage
+        JOIN persons AS Child
+        ON lineage.childID = Child.id
+        JOIN persons AS Parent
+        ON lineage.parentID = Parent.id
+        WHERE Child IS ?
+    """
+
+    #Parents = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    Parents = array
+    #con.close()
 
     if not Parents:
         Father = "unfound"
@@ -230,8 +295,8 @@ def parents_lookup(personName):
 
 # FUNCTION: children of each partner
 def chitlins_lookup(personName):
-    chitlins = db.execute(
-        """
+
+    query = """
         SELECT
             Parent.first_EN AS Parent
             , Child.first_EN AS Child
@@ -252,8 +317,16 @@ def chitlins_lookup(personName):
             )
         AND Parent IS NOT ?
         ORDER BY Age DESC
-        """,
-        personName, personName)
+    """
+
+    #chitlins = db.execute(query, personName, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, personName, )):
+        array.append(row)
+    chitlins = array
+    #con.close()
+
     return chitlins
 
 # FUNCTION: Generation counter
@@ -295,47 +368,75 @@ def gen_delta(personName, count=0, matrix={}):
 
 # FUNCTION: address lookup
 def address_lookup(personName):
-        address = db.execute("""
+    query = """
         SELECT
-        first_EN
-        , street1
-        , street2
-        , city
-        , state
-        , postal
-        , country
+            first_EN
+            , street1
+            , street2
+            , city
+            , state
+            , postal
+            , country
         FROM addresses
         JOIN persons on personID = persons.id
         WHERE addresses.Status IS 'Active'
         AND first_EN = ?
-        """,
-        personName)
-        return address
+    """
+
+    #address = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    address = array
+    #con.close()
+
+    return address
 
 # FUNCTION: email lookup
 def email_lookup(personName):
-    email = db.execute("""
-    SELECT email
-    FROM emails
-    JOIN persons
-    ON emails.personID = persons.id
-    WHERE first_EN IS ?
-    """,
-    personName)
+
+    query = """
+        SELECT email
+        FROM emails
+        JOIN persons
+        ON emails.personID = persons.id
+        WHERE first_EN IS ?
+    """
+
+    #email = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    email = array
+    #con.close()
+
+
     if not email:
         email = "unfound"
     return email
 
 # FUNCTION: phone number lookup
 def phone_lookup(personName):
-    phP = db.execute("""
-    SELECT countryCode, ph
-    FROM phones
-    JOIN persons
-    ON phones.personID = persons.id
-    WHERE first_EN IS ?
-    """,
-    personName)
+
+    query = """
+        SELECT countryCode, ph
+        FROM phones
+        JOIN persons
+        ON phones.personID = persons.id
+        WHERE first_EN IS ?
+    """
+
+    #phP = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    phP = array
+    #con.close()
+
+
     if phP:
         phP = phP[0]
         phone = "+"+str(phP['countryCode'])+"-"+str(phP['ph'][:3])+"-"+str(phP['ph'][3:6]+"-"+str(phP['ph'][6:]))
@@ -345,15 +446,23 @@ def phone_lookup(personName):
 
 # FUNCTION: birth date pull & formatting for HTML (OLD)
 def DOB_pulling(personName):
-    DOB = db.execute("""
-    SELECT
-        DOB_year
-        ,DOB_month
-        ,DOB_day
-    FROM persons
-    WHERE persons.first_EN IS ?
-    """,
-    personName)
+
+    query = """
+        SELECT
+            DOB_year
+            ,DOB_month
+            ,DOB_day
+        FROM persons
+        WHERE persons.first_EN IS ?
+    """
+
+    #DOB = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    DOB = array
+    #con.close()
 
     if DOB:
         # .zfill makes the number into 2 digits.
@@ -365,13 +474,21 @@ def DOB_pulling(personName):
 
 # FUNCTION: birth date pull & formatting for HTML (NEW)
 def DOB_pull(personName):
-    DOB = db.execute("""
-    SELECT
-        DOB
-    FROM persons
-    WHERE persons.first_EN IS ?
-    """,
-    personName)
+
+    query = """
+        SELECT
+            DOB
+        FROM persons
+        WHERE persons.first_EN IS ?
+    """
+
+    #DOB = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    DOB = array
+    #con.close()
 
     if DOB:
         DOB = DOB[0]['DOB']
@@ -381,14 +498,22 @@ def DOB_pull(personName):
 
 # FUNCTION: birthday pull already in correct format
 def bday_pull(personName):
-    bday = db.execute("""
-    SELECT
-        DOB_month
-        ,DOB_day
-    FROM persons
-    WHERE persons.first_EN IS ?
-    """,
-    personName)
+
+    query = """
+        SELECT
+            DOB_month
+            ,DOB_day
+        FROM persons
+        WHERE persons.first_EN IS ?
+    """
+
+    #bday = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    bday = array
+    #con.close()
 
     if bday:
         # .zfill makes the number into 2 digits.
@@ -400,76 +525,110 @@ def bday_pull(personName):
 
 # FUNCTION: calculate age (NEW)
 from datetime import datetime
+
 def calc_age(personName):
 
-        persons = db.execute("""
-            SELECT
-                strftime('%Y', DOB) AS DOBYear
-                ,strftime('%m', DOB) AS DOBMonth
-                ,strftime('%d', DOB) AS DOBDay
-                ,persons.DOD_year
-                ,"" AS Age
-            FROM persons
-            WHERE persons.first_EN = ?;
-            """,
-            personName)
+    query = """
+        SELECT
+            strftime('%Y', DOB) AS DOBYear
+            ,strftime('%m', DOB) AS DOBMonth
+            ,strftime('%d', DOB) AS DOBDay
+            ,strftime('%Y', DOD) AS DODYear
+            ,strftime('%m', DOD) AS DODMonth
+            ,strftime('%d', DOD) AS DODDay
+            ,persons.DOD_year
+            ,"" AS Age
+        FROM persons
+        WHERE persons.first_EN = ?;
+    """
 
-        current_date = datetime.now()
-        n = 0 # define n=0 since we are not using a for loop in this version of the script.
-        if not persons[n]['DOBYear']: # DOB_year does not exist.
-            persons[n]['DOBYear'] = ""
-            persons[n]['DOBMonth'] = ""
-            persons[n]['DOBDay'] = ""
-            age = ""
-        elif persons[n]['DOBYear'] and persons[n]['DOD_year']: # DOB_year exists, DOD_year exists.
-            DOByear = int(persons[n]['DOBYear'])
-            DOD_year = int(persons[n]['DOD_year'])
-            age = round(DOD_year - DOByear, 1)
-            persons[n]['Age'] = age
-        else: # DOB_year exists, DOD_year does not exist.
-            DOByear = int(persons[n]['DOBYear'])
-            DOBmonth = int(persons[n]['DOBMonth'])
-            DOBday = int(persons[n]['DOBDay'])
-            DOB = datetime(DOByear, DOBmonth, DOBday)
-            age = (current_date - DOB)
-            age = round(age.days/365.25,1)
-            persons[n]['Age'] = age
+    #persons = db.execute(query, personName) #cs50 SQL
 
-        return age
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    persons = array
+    #con.close()
+
+    n = 0 # define n=0 since we are not using a for loop in this version of the script.
+
+    current_date = datetime.now()
+
+    if not persons[n]['DOBYear']: # DOB_year does not exist.
+        persons[n]['DOBYear'] = ""
+        persons[n]['DOBMonth'] = ""
+        persons[n]['DOBDay'] = ""
+        age = ""
+    elif persons[n]['DOBYear'] and persons[n]['DOD_year']: # DOB_year exists, DOD_year exists.
+        DOByear = int(persons[n]['DOBYear'])
+        DOBmonth = int(persons[n]['DOBMonth'])
+        DOBday = int(persons[n]['DOBDay'])
+        DOB = datetime(DOByear, DOBmonth, DOBday)
+
+        DODyear = int(persons[n]['DODYear'])
+        DODmonth = int(persons[n]['DODMonth'])
+        DODday = int(persons[n]['DODDay'])
+        DOD = datetime(DODyear, DODmonth, DODday)
+
+        age = (DOD - DOB)
+        age = round(age.days/365.25,1)
+
+        persons[n]['Age'] = age
+
+    else: # DOB_year exists, DOD_year does not exist.
+        DOByear = int(persons[n]['DOBYear'])
+        DOBmonth = int(persons[n]['DOBMonth'])
+        DOBday = int(persons[n]['DOBDay'])
+        DOB = datetime(DOByear, DOBmonth, DOBday)
+        age = (current_date - DOB)
+        age = round(age.days/365.25,1)
+        persons[n]['Age'] = age
+
+    return age
 
 # FUNCTION: partner lookup, agnostic, active relationships
 def partner_lookup(personName):
-    partner = db.execute("""
-    SELECT
-        Partner1 AS Partner
-    FROM(
+
+    query = """
         SELECT
-            Partner1.first_EN AS Partner1
-            , Partner2.first_EN AS Partner2
-            , status
-        FROM partners
-        JOIN persons AS Partner1
-            ON partner1_id = Partner1.id
-        JOIN persons AS Partner2
-            ON partner2_id = Partner2.id
-        WHERE Partner1 IS ? --AND status IS 'Active'
-        OR Partner2 IS ? AND status IS 'Active'
-        UNION
-        SELECT
-            Partner1.first_EN AS Partner1
-            ,Partner2.first_EN AS Partner2
-            , status
-        FROM partners
-        JOIN persons AS Partner2
-            ON partner1_id = Partner2.id
-        JOIN persons AS Partner1
-            ON partner2_id = Partner1.id
-        WHERE Partner1 IS ? AND status IS 'Active'
-        OR Partner2 IS ? AND status IS 'Active'
-        )
-    WHERE Partner1 IS NOT ?
-    """,
-    personName, personName, personName, personName, personName)
+            Partner1 AS Partner
+        FROM(
+            SELECT
+                Partner1.first_EN AS Partner1
+                , Partner2.first_EN AS Partner2
+                , status
+            FROM partners
+            JOIN persons AS Partner1
+                ON partner1_id = Partner1.id
+            JOIN persons AS Partner2
+                ON partner2_id = Partner2.id
+            WHERE Partner1 IS ? --AND status IS 'Active'
+            OR Partner2 IS ? AND status IS 'Active'
+            UNION
+            SELECT
+                Partner1.first_EN AS Partner1
+                ,Partner2.first_EN AS Partner2
+                , status
+            FROM partners
+            JOIN persons AS Partner2
+                ON partner1_id = Partner2.id
+            JOIN persons AS Partner1
+                ON partner2_id = Partner1.id
+            WHERE Partner1 IS ? AND status IS 'Active'
+            OR Partner2 IS ? AND status IS 'Active'
+            )
+        WHERE Partner1 IS NOT ?
+    """
+
+    #partner = db.execute(query, personName, personName, personName, personName, personName)
+    #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, personName, personName, personName, personName, )):
+        array.append(row)
+    partner = array
+    #con.close()
+
     if not partner:
         return [{'Partner': ""}]
     return partner
@@ -477,39 +636,52 @@ def partner_lookup(personName):
 
 # FUNCTION: partner lookup, alternative query, looks up history
 def partners_lookup(personName):
-    partners = db.execute(
-            """
+    query = """
+        SELECT DISTINCT
+            Partner1.first_EN AS Partner1
+            , Partner2.first_EN AS Partner2
+            --, Status
+        FROM partners
+        JOIN persons AS Partner1
+            ON partner1_id = Partner1.id
+        JOIN persons AS Partner2
+            ON partner2_id = Partner2.id
+        WHERE Partner1 IS ?
+    """
+
+    #partners = db.execute(query, personName) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    partners = array
+    #con.close()
+
+
+    # this if statement fixes a bug where the partners of the in-law's page doesn't appear.
+    if not partners:
+        query = """
             SELECT DISTINCT
                 Partner1.first_EN AS Partner1
                 , Partner2.first_EN AS Partner2
                 --, Status
             FROM partners
             JOIN persons AS Partner1
-                ON partner1_id = Partner1.id
+                ON partner1_id = Partner2.id
             JOIN persons AS Partner2
-                ON partner2_id = Partner2.id
+                ON partner2_id = Partner1.id
             WHERE Partner1 IS ?
-            """,
-            personName)
-    # this if statement fixes a bug where the partners of the in-law's page doesn't appear.
-    if not partners:
-        partners = db.execute(
-                """
-                SELECT DISTINCT
-                    Partner1.first_EN AS Partner1
-                    , Partner2.first_EN AS Partner2
-                    --, Status
-                FROM partners
-                JOIN persons AS Partner1
-                    ON partner1_id = Partner2.id
-                JOIN persons AS Partner2
-                    ON partner2_id = Partner1.id
-                WHERE Partner1 IS ?
-                """,
-                personName)
+        """
+
+        #partners = db.execute(query, personName) #cs50 SQL
+
+        array=[]
+        for row in con.execute(query, (personName, )):
+            array.append(row)
+        partners = array
+        #con.close()
+
     return partners
-
-
 
 
 # FUNCTION: space escape
@@ -532,7 +704,11 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///familyTree.db")
+#db = SQL("sqlite:///familyTree.db") #cs50 SQL
+
+con = sqlite3.connect("familyTree.db", check_same_thread=False)
+con.row_factory = dict_factory
+
 
 @app.after_request
 def after_request(response):
@@ -543,10 +719,12 @@ def after_request(response):
     return response
 
 # INDEX
+"""
 import qrcode
 from PIL import Image
 import base64
 import io
+"""
 
 @app.route("/")
 @login_required
@@ -557,6 +735,7 @@ def index():
     (https://buraksenol.medium.com/pass-images-to-html-without-saving-them-as-files-using-python-flask-b055f29908a)
     '''
 
+    """
     contents="this is a calcifer test"
 
     img = qrcode.make(contents)
@@ -565,8 +744,9 @@ def index():
     data = io.BytesIO()
     img.save(data, "PNG")
     encoded_img_data = base64.b64encode(data.getvalue())
-
-    return render_template("index.html", img_data=encoded_img_data.decode('utf-8'))
+    #return render_template("index.html", img_data=encoded_img_data.decode('utf-8'))
+    """
+    return render_template("index.html")
 
 # DIRECTORY
 @app.route("/directory", methods=["GET", "POST"])
@@ -577,35 +757,47 @@ def directory():
 
     ## using CONCAT in query SELECT is a good cheat way to blank out a field that is None.
 
-    persons = db.execute("""
-            SELECT
-                *
-                ,strftime('%Y', DOB) AS DOBYear
-                ,strftime('%m', DOB) AS DOBMonth
-                ,strftime('%d', DOB) AS DOBDay
-                ,"" AS bday
-                ,persons.DOD_year
-                ,"" AS Age
-                ,"" AS Zodiac
-                ,"" AS starSign
-                ,"" AS Gen
-                ,CONCAT(CN_Names.last_CN,CN_Names.middle_CN,CN_Names.first_CN) AS CN_Name
-                ,CONCAT(emails.email) AS Email
-                ,FB.URL AS FB
-                ,IG.URL AS IG
-            FROM persons
-            FULL JOIN CN_Names
-            ON CN_Names.personID = persons.id
-            FULL JOIN emails
-            ON emails.personID = persons.id
-            FULL JOIN (SELECT * from addresses WHERE addresses.status IS 'Active') addresses
-            ON addresses.personID = persons.id
-            FULL JOIN (SELECT * from URLs WHERE URLs.site IS 'facebook') FB
-            ON FB.personID = persons.id
-            FULL JOIN (SELECT * from URLs WHERE URLs.site IS 'instagram') IG
-            ON IG.personID = persons.id
-            """,)
-     # calculate age
+    query = """
+        SELECT
+            *
+            ,strftime('%Y', DOB) AS DOBYear
+            ,strftime('%m', DOB) AS DOBMonth
+            ,strftime('%d', DOB) AS DOBDay
+            ,strftime('%Y', DOD) AS DODYear
+            ,strftime('%m', DOD) AS DODMonth
+            ,strftime('%d', DOD) AS DODDay
+            ,persons.DOD_year
+            ,"" AS bday
+            ,"" AS Age
+            ,"" AS Zodiac
+            ,"" AS starSign
+            ,"" AS Gen
+            ,CONCAT(CN_Names.last_CN,CN_Names.middle_CN,CN_Names.first_CN) AS CN_Name
+            ,CONCAT(emails.email) AS Email
+            ,FB.URL AS FB
+            ,IG.URL AS IG
+        FROM persons
+        FULL JOIN CN_Names
+        ON CN_Names.personID = persons.id
+        FULL JOIN emails
+        ON emails.personID = persons.id
+        FULL JOIN (SELECT * from addresses WHERE addresses.status IS 'Active') addresses
+        ON addresses.personID = persons.id
+        FULL JOIN (SELECT * from URLs WHERE URLs.site IS 'facebook') FB
+        ON FB.personID = persons.id
+        FULL JOIN (SELECT * from URLs WHERE URLs.site IS 'instagram') IG
+        ON IG.personID = persons.id
+    """
+
+    #persons = db.execute(query,) #cs50 SQL
+
+    array=[]
+    for row in con.execute(query, ()):
+        array.append(row)
+    persons = array
+    #con.close()
+
+    # calculate age (the following script is a redundant paste from an existing function).
     for n in range(len(persons)):
 
         current_date = datetime.now()
@@ -617,9 +809,20 @@ def directory():
             age = ""
         elif persons[n]['DOBYear'] and persons[n]['DOD_year']: # DOB_year exists, DOD_year exists.
             DOByear = int(persons[n]['DOBYear'])
-            DOD_year = int(persons[n]['DOD_year'])
-            age = round(DOD_year - DOByear,1)
+            DOBmonth = int(persons[n]['DOBMonth'])
+            DOBday = int(persons[n]['DOBDay'])
+            DOB = datetime(DOByear, DOBmonth, DOBday)
+
+            DODyear = int(persons[n]['DODYear'])
+            DODmonth = int(persons[n]['DODMonth'])
+            DODday = int(persons[n]['DODDay'])
+            DOD = datetime(DODyear, DODmonth, DODday)
+
+            age = (DOD - DOB)
+            age = round(age.days/365.25,1)
+
             persons[n]['Age'] = age
+
         else: # DOB_year exists, DOD_year does not exist.
             DOByear = int(persons[n]['DOBYear'])
             DOBmonth = int(persons[n]['DOBMonth'])
@@ -729,15 +932,22 @@ def profiles():
         address_str = "unfound"
 
     # query BIRTH DATE elements
-    DOB1 = db.execute("""
-    SELECT
-        DOB_year
-        ,DOB_month
-        ,DOB_day
-    FROM persons
-    WHERE persons.first_EN IS ?
-    """,
-    personName)
+
+    query = """
+        SELECT
+            DOB_year
+            ,DOB_month
+            ,DOB_day
+        FROM persons
+        WHERE persons.first_EN IS ?
+    """
+
+    # DOB1 = db.execute(query, personName) #cs50 SQL
+    array=[]
+    for row in con.execute(query, (personName, )):
+        array.append(row)
+    DOB1 = array
+    #con.close()
 
     DOB_year = DOB1[0]['DOB_year']
     DOB_month = DOB1[0]['DOB_month']
@@ -805,9 +1015,16 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username.
-        rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
-        )
+        query = "SELECT * FROM users WHERE username = ?"
+        arg =  request.form.get("username")
+
+        #rows = db.execute(query, arg) #cs50 SQL
+
+        # sqlite3:
+        array=[]
+        for row in con.execute(query, (arg, )):
+            array.append(row)
+        rows = array
 
         # Ensure username exists and password is correct.
         if len(rows) != 1 or check_password_hash(
@@ -860,9 +1077,16 @@ def register():
 
         # Query database for username
         # it is assumed that this query will only return one entry (row).
-        rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
-            )
+        query = "SELECT * FROM users WHERE username = ?"
+        arg = request.form.get("username")
+
+        #rows = db.execute(query, arg) #cs50 SQL
+
+        # sqlite3:
+        array=[]
+        for row in con.execute(query, (arg, )):
+            array.append(row)
+        rows = array
 
         # If the username already exists in the database.
         # If len(rows) is equal to 1, that means
@@ -871,10 +1095,20 @@ def register():
             return apology("username already exists in database", 400)
 
         # Write information into database.
-        db.execute(
-            "INSERT into users (username, hash) VALUES(?, ?)",
-            request.form.get("username"),
-            generate_password_hash(request.form.get("password"),method='pbkdf2:sha1', salt_length=8))
+        query = "INSERT into users (username, hash) VALUES(?, ?)"
+        arg2 = request.form.get("username")
+        arg3 = generate_password_hash(request.form.get("password"),method='pbkdf2:sha1',salt_length=8)
+
+        """
+        # cs50 SQL:
+        from cs50 import SQL #cs50 SQL
+        db = SQL("sqlite:///familyTree.db") #cs50 SQL
+        db.execute(query, arg2, arg3)
+        """
+
+        # sqlite3 (hint: need to .commit() in order to INSERT):
+        con.execute(query, (arg2, arg3))
+        con.commit() # <-- important
 
         # Display the text "You have successfuly Registered."
         flash("You have successfuly Registered!")

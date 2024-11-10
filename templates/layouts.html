@@ -20,7 +20,7 @@
 
 
 
-    <title>The Thieu Family Lineage: {% block title %}{% endblock %}</title>
+    <title>Thieu Family Genealogy {% block title %}{% endblock %}</title>
 
 
 </head>
@@ -38,14 +38,11 @@
 -->
     <nav class="bg-light border navbar navbar-expand-md navbar-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                <span class="red">Thieu Family Lineage</span></a>
+            <a class="navbar-brand" href="/"><span class="red" >邵家譜 | Thieu Family Genealogy</span></a>
             <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar">
-
-
                 {% if session["user_id"] %}
                     <ul class="navbar-nav me-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/directory">Directory</a></li>
@@ -64,7 +61,6 @@
         </div>
     </nav>
 
-
     {% if get_flashed_messages() %}
         <header>
             <div class="alert alert-primary mb-0 text-center" role="alert">
@@ -73,8 +69,7 @@
         </header>
     {% endif %}
 
-
-    <main class="container py-5 text-center">
+    <main class="w3-container py-5 text-center">
         {% block main %}{% endblock %}
     </main>
 
