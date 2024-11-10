@@ -749,20 +749,12 @@ def index():
     encoded_img_data = base64.b64encode(data.getvalue())
     #return render_template("index.html", img_data=encoded_img_data.decode('utf-8'))
     """
+    
 
-    id = session["user_id"]
-    query = """
-        SELECT
-            username
-        FROM users
-        WHERE id is ?
-    """
-    array=[]
-    for row in con.execute(query, (id, )):
-        array.append(row)
-    username = array[0]['username']
 
-    return render_template("index.html", username_ = username)
+    #return render_template("index.html", username_ = username)
+    return render_template("index.html")
+
 
 # DIRECTORY
 @app.route("/directory", methods=["GET", "POST"])
